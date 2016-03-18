@@ -6,8 +6,6 @@
 
 int main(int argc, char* argv[]) {
     managerStarted();
-    parseArgs(argc, argv);
-    startAllModules();
-    while(1);
+    consoleMain();
     return 0;
 }

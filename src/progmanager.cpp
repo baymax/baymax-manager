@@ -48,3 +48,60 @@ void startConnectionModule() {
     system(text);
     printAsManager("baymax-connection module started!!");   
 }
+
+void stopAllModules() {
+    stopUiModule();
+    stopSenderModule();
+    stopLoggerModule();
+    stopConnectionModule();
+}
+
+void stopUiModule() {
+    printAsManager("Stopping baymax-gtk module...");
+    char text[50];
+    snprintf(text, 50, "kill %s", getPidOfProcess("baymax-gtk"));
+    system(text);
+    printAsManager("baymax-gtk module stopped");
+    deleteGtkPipe();
+}
+
+void stopSenderModule() {
+    printAsManager("Stopping baymax-sender module...");
+    char text[50];
+    snprintf(text, 50, "kill %s", getPidOfProcess("baymax-sender"));
+    system(text);
+    printAsManager("baymax-sender module stopped");    
+    deleteSenderPipe();
+}
+
+void stopLoggerModule() {
+    printAsManager("Stopping baymax-logger module...");
+    char text[50];
+    snprintf(text, 50, "kill %s", getPidOfProcess("baymax-logger"));
+    system(text);
+    printAsManager("baymax-logger module stopped");   
+    deleteLoggerPipe();
+}
+
+void stopConnectionModule() {
+    printAsManager("Stopping baymax-connection module...");
+    char text[50];
+    snprintf(text, 50, "kill %s", getPidOfProcess("baymax-connection"));
+    system(text);
+    printAsManager("baymax-connection module stopped");
+    deleteConnectionPipe();   
+}
+
+char* getPidOfProcess(const char *programName) {
+    int fd;
+    char text[50];
+    char buf[20];
+    char *getPidPathOutput = "/tmp/baymax-getpid";
+    mkfifo(getPidPathOutput , 0666);
+    snprintf(text, 50, "pidof %s > %s &", programName, getPidPathOutput);
+    system(text);
+    fd = open(getPidPathOutput, O_RDONLY);
+    read(fd, buf, 20);
+    return buf;
+    
+}

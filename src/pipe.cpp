@@ -29,6 +29,11 @@ pthread_t senderReaderThreadId;
 pthread_t loggerReaderThreadId;
 pthread_t connectionReaderThreadId;
 
+bool runningGtkReaderRunning = 1;
+bool runningSenderReaderRunning = 1;
+bool runningLoggerReaderRunning = 1;
+bool runningConnectionReaderRunning = 1;
+
 void createGtkPipe() {
     int err;
     mkfifo(gtkPipePathInput, 0666);
@@ -69,6 +74,29 @@ void createConnectionPipe() {
     } 
 }
 
+void deleteGtkPipe() {
+    runningGtkReaderRunning = 0;
+    unlink("/tmp/baymax-gtk-output");
+    unlink("/tmp/baymax-gtk");
+}
+
+void deleteSenderPipe() {
+    runningSenderReaderRunning = 0;
+    unlink("/tmp/baymax-sender-output");
+    unlink("/tmp/baymax-sender");
+}
+
+void deleteLoggerPipe() {
+    runningLoggerReaderRunning = 0;
+    unlink("/tmp/baymax-logger-output");
+    unlink("/tmp/baymax-logger");
+}
+
+void deleteConnectionPipe() {
+    runningConnectionReaderRunning = 0;
+    unlink("/tmp/baymax-connection-output");
+    unlink("/tmp/baymax-connection");
+}
 
 char *getGtkInputPipe() {
     return gtkPipePathInput;

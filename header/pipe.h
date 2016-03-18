@@ -10,6 +10,11 @@ void createSenderPipe();
 void createLoggerPipe();
 void createConnectionPipe();
 
+void deleteGtkPipe();
+void deleteSenderPipe();
+void deleteLoggerPipe();
+void deleteConnectionPipe();
+
 void* gtkOutputReader(void* data);
 void* senderOutputReader(void* data);
 void* loggerOutputReader(void* data);

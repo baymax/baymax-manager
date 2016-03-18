@@ -2,6 +2,7 @@
 
 int main() {
     printf("Ui started");
+    while(1);
     //printf("Ui is running\n");
     
     //    int fd = open(gtkPipePath, O_WRONLY);
