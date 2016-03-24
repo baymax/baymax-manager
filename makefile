@@ -15,6 +15,9 @@ EXECUTABLE = baymax
 
 ALL: $(EXECUTABLE) connection logger sender ui
 
+$(OBJ_DIR)signals.o: $(SRC_DIR)signals.c $(HEADER_DIR)signals.h $(OBJ_DIR)logger.o
+	$(CC) -c -o $@ $< $(CFLAGS)
+
 $(OBJ_DIR)progmanager.o: $(SRC_DIR)progmanager.cpp $(HEADER_DIR)progmanager.h $(OBJ_DIR)logger.o $(OBJ_DIR)pipe.o
 	$(CC) -c -o $@ $< $(CFLAGS)
 

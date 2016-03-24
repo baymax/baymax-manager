@@ -6,12 +6,14 @@ void startUiModule();
 void startSenderModule();
 void startLoggerModule();
 void startConnectionModule();
+void startReaderModule();
 
-void stopAllModules();
+int stopAllModules();
 void stopUiModule();
 void stopSenderModule();
 void stopLoggerModule();
 void stopConnectionModule();
+void stopReaderModule();
 
 char* getPidOfProcess(const char *programName);
 

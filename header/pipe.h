@@ -1,32 +1,62 @@
 #ifndef PIPE_H
 #define PIPE_H
 
-//#define gtkPipePathInput = "/tmp/baymax-gtk";
+extern const char *gtkPipePathOutput;
+extern const char *gtkPipePathInput;
+extern const char *gtkPipePathError;
 
-//char * senderPipePath = "/tmp/baymax-sender";
+extern const char *senderPipePathOutput;
+extern const char *senderPipePathInput;
+
+extern const char *loggerPipePathOutput;
+extern const char *loggerPipePathInput;
+
+extern const char *connectionPipePathOutput;
+extern const char *connectionPipePathInput;
+
+extern const char *readerPipePathOutput;
+extern const char *readerPipePathInput;
+extern const char *readerPipePathError;
 
 void createGtkPipe();
 void createSenderPipe();
 void createLoggerPipe();
 void createConnectionPipe();
+void createReaderPipe();
 
 void deleteGtkPipe();
 void deleteSenderPipe();
 void deleteLoggerPipe();
 void deleteConnectionPipe();
+void deleteReaderPipe();
 
 void* gtkOutputReader(void* data);
+void* gtkErrorReader(void* data);
+
 void* senderOutputReader(void* data);
 void* loggerOutputReader(void* data);
 void* connectionOutputReader(void* data);
 
-char *getGtkInputPipe();
-char *getGtkOutputPipe();
-char *getSenderInputPipe();
-char *getSenderOutputPipe();
-char *getLoggerInputPipe();
-char *getLoggerOutputPipe();
-char *getConnectionInputPipe();
-char *getConnectionOutputPipe();
+int openGtkOutputPipe();
+int openReaderOutputPipe();
+
+int closeGtkOutputPipe();
+int closeReaderOutputPipe();
+
+int openGtkErrorPipe();
+int openReaderErrorPipe();
+
+int closeGtkErrorPipe();
+int closeReaderErrorPipe();
+
+void simulateGtkInput();
+void simulateReaderInput();
+
+const char *getReaderOutputPipe();
+const char *getReaderInputPipe();
+const char *getReaderErrorPipe();
+
+void *readerOutputReader(void* data);
+void *readerErrorReader(void* data);
 
 #endif // PIPE_H

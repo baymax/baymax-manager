@@ -5,51 +5,74 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "progmanager.h"
 #include "logger.h"
 #include "pipe.h"
+
+
+unsigned char gtkRunning = 0;
+unsigned char senderRunning = 0;
+unsigned char loggerRunning = 0;
+unsigned char connectionRunning = 0;
+unsigned char readerRunning = 0;
+
 
 void startAllModules() {
     startUiModule();
     startSenderModule();
     startLoggerModule();
     startConnectionModule();
+    startReaderModule();
 }
 
 void startUiModule() {
-    char text[50];
+    char text[100];
     createGtkPipe();
-    snprintf(text, 50, "baymax-gtk > %s &", getGtkOutputPipe());
+    snprintf(text, 100, "baymax-gtk > %s < %s 2> %s &", gtkPipePathOutput, gtkPipePathInput, gtkPipePathError);
     system(text);
-    printAsManager("baymax-gtk module started!!");
+    openGtkOutputPipe();
+    openGtkErrorPipe();
+    printAsManager("baymax-gtk module started!");
 }
 
 void startSenderModule() {
-    char text[50];
+    char text[100];
     createSenderPipe();
-    snprintf(text, 50, "baymax-sender > %s &", getSenderOutputPipe());
+    snprintf(text, 100, "baymax-sender > %s < %s &", senderPipePathOutput, senderPipePathInput);
     system(text);
     printAsManager("baymax-sender module started!!");    
 }
 
 void startLoggerModule() {
-    char text[50];
+    char text[100];
     createLoggerPipe();
-    snprintf(text, 50, "baymax-logger > %s &", getLoggerOutputPipe());
+    snprintf(text, 100, "baymax-logger > %s < %s &", loggerPipePathOutput, loggerPipePathInput);
     system(text);
     printAsManager("baymax-logger module started!!");    
 }
 
 void startConnectionModule() {
-    char text[50];
+    char text[100];
     createConnectionPipe();
-    snprintf(text, 50, "baymax-connection > %s &", getConnectionOutputPipe());
+    snprintf(text, 100, "baymax-connection > %s < %s &", connectionPipePathOutput,connectionPipePathInput);
     system(text);
     printAsManager("baymax-connection module started!!");   
 }
 
-void stopAllModules() {
+void startReaderModule() {
+    char text[100];
+    createReaderPipe();
+    snprintf(text, 100, "baymax-reader > %s 2> %s &", readerPipePathOutput, readerPipePathError);
+    //snprintf(text, 100, "baymax-reader > %s < %s 2> %s &", readerPipePathOutput, readerPipePathInput, readerPipePathError);
+    system(text);
+    openReaderOutputPipe();
+    openReaderErrorPipe(); 
+    printAsManager("baymax-reader module started!!");     
+}
+
+int stopAllModules() {
     stopUiModule();
     stopSenderModule();
     stopLoggerModule();
@@ -61,6 +84,7 @@ void stopUiModule() {
     char text[50];
     snprintf(text, 50, "kill %s", getPidOfProcess("baymax-gtk"));
     system(text);
+    //kill(itoa(getPidOfProcess("baymax-gtk")), SIGINT);
     printAsManager("baymax-gtk module stopped");
     deleteGtkPipe();
 }
@@ -90,6 +114,17 @@ void stopConnectionModule() {
     system(text);
     printAsManager("baymax-connection module stopped");
     deleteConnectionPipe();   
+}
+
+void stopReaderModule() {
+    printAsManager("Stopping baymax-reader module...");
+    char text[50];
+    snprintf(text, 50, "kill %s", getPidOfProcess("baymax-reader"));
+    system(text);
+    //kill(itoa(getPidOfProcess("baymax-reader")), SIGINT);
+    printAsManager("baymax-reader module stopped");
+    deleteReaderPipe();  
+    
 }
 
 char* getPidOfProcess(const char *programName) {

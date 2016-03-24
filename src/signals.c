@@ -1,26 +1,10 @@
-#include "main.h"
-#include "console.h"
-#include "argsparser.h"
+#include "signals.h"
 #include "logger.h"
 #include "progmanager.h"
-
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-
-void prosessSigint(int signum);
-void registerSignals();
-
-int main(int argc, char* argv[]) {
-    registerSignals();
-    managerStarted();
-    startReaderModule();
-    startUiModule();
-    consoleMain();
-    return 0;
-}
-
 
 void prosessSigint(int signum) {
     printAsManager("Terminate signal reviced...");
