@@ -15,8 +15,10 @@ void registerSignals();
 int main(int argc, char* argv[]) {
     registerSignals();
     managerStarted();
+    //startReaderModule();///
+    startGtkModule();
     startReaderModule();
-    startUiModule();
+    startSenderModule();
     consoleMain();
     return 0;
 }
@@ -25,11 +27,15 @@ int main(int argc, char* argv[]) {
 void prosessSigint(int signum) {
     printAsManager("Terminate signal reviced...");
     printAsManager("Shutting down all modules...");
-    if (1 == stopAllModules()) {
+    stopGtkModule();
+    stopReaderModule();
+    stopSenderModule();
+    exit(EXIT_SUCCESS);
+    /*if (1 == stopAllModules()) {
         printAsManager("All modules stopped succefully!");
     } else {
         printAsManager("Something went wrong!");
-    }
+    }*/
     
 }
 

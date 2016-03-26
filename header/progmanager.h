@@ -2,14 +2,14 @@
 #define PROGMANAGER_H
 
 void startAllModules();
-void startUiModule();
+void startGtkModule();
 void startSenderModule();
 void startLoggerModule();
 void startConnectionModule();
 void startReaderModule();
 
 int stopAllModules();
-void stopUiModule();
+void stopGtkModule();
 void stopSenderModule();
 void stopLoggerModule();
 void stopConnectionModule();

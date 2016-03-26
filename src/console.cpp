@@ -14,7 +14,7 @@ void consoleMain() {
 				scanf("%d", &cmd);
 				switch(cmd) {
 					case 1:
-						startUiModule();
+						startGtkModule();
 					break;
 					case 2:
 						startSenderModule();
@@ -35,7 +35,7 @@ void consoleMain() {
 				scanf("%d", &cmd);
 				switch(cmd) {
 					case 1:
-						stopUiModule();
+						stopGtkModule();
 					break;
 					case 2:
 						stopSenderModule();

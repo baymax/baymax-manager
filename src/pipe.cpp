@@ -20,6 +20,7 @@ const char *gtkPipePathError = "/tmp/baymax-gtk-error";
 
 const char *senderPipePathOutput = "/tmp/baymax-sender-output";
 const char *senderPipePathInput = "/tmp/baymax-sender";
+const char *senderPipePathError = "/tmp/baymax-sender-error";
 
 const char *loggerPipePathOutput = "/tmp/baymax-logger-output";
 const char *loggerPipePathInput = "/tmp/baymax-logger";
@@ -36,6 +37,8 @@ const char *readerPipePathError = "/tmp/baymax-reader-error";
 int gtkPipeOutputFd;
 int gtkPipeInputFd;
 int gtkPipeErrorFd;
+
+int senderPipeOutputFd;
 
 int readerPipeOutputFd;
 int readerPipeInputFd;
@@ -66,13 +69,9 @@ void createGtkPipe() {
 }
 
 void createSenderPipe() {
-	int err;
 	mkfifo(senderPipePathInput, 0666);
 	mkfifo(senderPipePathOutput, 0666);
-	err = pthread_create(&senderReaderThreadId, NULL, &senderOutputReader, NULL);
-	if (err != 0) {
-		printAsManager("Cant create sender pipe :((!");
-	}
+	mkfifo(senderPipePathError, 0666);
 }
 
 void createLoggerPipe() {
@@ -108,7 +107,7 @@ int openGtkOutputPipe() {
 	gtkPipeOutputFd = open(gtkPipePathOutput, O_RDONLY);
 	if (gtkPipeOutputFd < 0) {
 		reportError(GTK_OUTPUT_PIPE_OPENING_FAILED, errno);
-		return GTK_OUTPUT_PIPE_OPENING_FAILED;
+		return -1;
 	}
 	int err;
 	err = pthread_create(&gtkReaderThreadId, NULL, &gtkOutputReader, NULL);
@@ -117,7 +116,7 @@ int openGtkOutputPipe() {
 		return GTK_OUTPUT_THREAD_CREATING_FAILED;
 		//printAsManager("Cant create connection pipe :((!");
 	}
-	return 0;
+	return gtkPipeOutputFd;
 }
 
 int closeGtkOutputPipe() {
@@ -153,7 +152,22 @@ int closeGtkErrorPipe() {
 	return 0;	
 }
 
-// gtk
+int openSenderOutputPipe() {
+	//
+	senderPipeOutputFd = open(senderPipePathOutput, O_RDONLY);
+	if (senderPipeOutputFd < 0) {
+		reportError(SENDER_OUTPUT_PIPE_OPENING_FAILED, errno);
+		return SENDER_OUTPUT_PIPE_OPENING_FAILED;
+	}
+	return 0;
+}
+
+int closeSenderOutputPipe() {
+	if (close(senderPipeOutputFd) < 0) {
+		reportError(SENDER_OUTPUT_PIPE_CLOSING_FAILED, errno);
+		return SENDER_OUTPUT_PIPE_CLOSING_FAILED;
+	}
+}
 
 int openReaderOutputPipe() {
 	readerPipeOutputFd = open(readerPipePathOutput, O_RDONLY);
@@ -221,8 +235,9 @@ void deleteGtkPipe() {
 
 void deleteSenderPipe() {
 	runningSenderReaderRunning = 0;
-	unlink("/tmp/baymax-sender-output");
-	unlink("/tmp/baymax-sender");
+	unlink(senderPipePathOutput);
+	unlink(senderPipePathInput);
+	unlink(senderPipePathError);
 }
 
 void deleteLoggerPipe() {
